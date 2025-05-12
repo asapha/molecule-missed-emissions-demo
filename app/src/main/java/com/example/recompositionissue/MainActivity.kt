@@ -44,7 +44,7 @@ fun View(eventSink: (Event) -> Unit) {
   Scaffold { paddingValues ->
     Column(modifier = Modifier.padding(paddingValues)) {
       val modifier = Modifier.border(2.dp, value?.let { Color.Unspecified } ?: Color.Red)
-      Text(modifier = modifier, text = value ?: "Value is null!!")
+      Text(modifier = modifier, text = value ?: "null")
       Button(onClick = { eventSink(Event.Navigate) }) { Text("Refresh") }
     }
   }
