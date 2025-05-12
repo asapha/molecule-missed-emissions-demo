@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -22,7 +20,6 @@ import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import com.example.recompositionissue.MyScreen.Event
 import com.example.recompositionissue.MyScreen.State
-import com.example.recompositionissue.ui.theme.RecompositionissueTheme
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -44,8 +41,8 @@ fun View(eventSink: (Event) -> Unit) {
   // The issue is that, sometimes, `value` stays null.
   val value by MyStateFlow.collectAsState(null)
 
-  Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-    Column(modifier = Modifier.padding(innerPadding)) {
+  Scaffold { paddingValues ->
+    Column(modifier = Modifier.padding(paddingValues)) {
       val modifier = Modifier.border(2.dp, value?.let { Color.Unspecified } ?: Color.Red)
       Text(modifier = modifier, text = value ?: "Value is null!!")
       Button(onClick = { eventSink(Event.Navigate) }) { Text("Refresh") }
@@ -71,17 +68,11 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      RecompositionissueTheme {
-        val backStack = rememberSaveableBackStack(MyScreen)
-        val navigator = rememberCircuitNavigator(backStack)
+      val backStack = rememberSaveableBackStack(MyScreen)
+      val navigator = rememberCircuitNavigator(backStack)
 
-        CircuitCompositionLocals(circuit) {
-          Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-              NavigableCircuitContent(navigator, backStack)
-            }
-          }
-        }
+      CircuitCompositionLocals(circuit) {
+        NavigableCircuitContent(navigator = navigator, backStack = backStack)
       }
     }
   }
